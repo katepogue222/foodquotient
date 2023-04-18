@@ -1,0 +1,15 @@
+Package: foodquotient
+Type: Package
+Title: Food Quotient and Nutrient Analysis for HSFFQ 
+Version: 0.1.0
+Author:Kate Pogu
+Maintainer: The package maintainer <katepogue222@gmail.com>
+Description: The foodqotient package was created to aid in analysing data from a food frequency questionaire known as the Harvard Service Food Frequency Questionaire (HSFFQ).
+    Functions from this package take answers of the HSFFQ and generate estimates of daily consumed micronutrients, calories, macronutrients on an indeviudal level.
+    The package is also capable of calculating food quotients on an indevidual and group level, which aides in the calculation of total energy expenidture (TEE) using the doubly labeled water (DLW) method, which is the gold standard for measuring TEE. 
+License: MIT
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
