@@ -16,6 +16,9 @@ The grams() function uses the frequency responses and age of each participant to
 The macros() function uses the age of each participant as well as their 85 frequency responses to calculate the total amount of protein, carbohydrates, and fat consumed per day for the participant. A dataframe identical in structure to the "age_freq" example dataframe is needed to plug into the macros() function. The function will output a dataframe with 3 columns labeled "protein", "carbs", and "fat", with an identical number of rows to the dataframe that was plugged into the function. 
 
 ### micros()
+The macros() function uses the age of each participant as well as their 85 frequency responses to calculate the total amount of calcium, 
+iron, zinc, vitamin.c, vitamin.b6, vitamin.a, and folate consumed per day for each participant. A dataframe identical in structure to the "age_freq" example dataframe is needed to plug into the macros() function. The function will output a dataframe with 7 columns labeled "calcium", "iron", "zinc", "vitamin.c", "vitamin.b6", "vitamin.a", and "folate" with an identical number of rows to the dataframe that was plugged into the function.
+
 ### nutrients()
 ### quotient()
 ### macquotient()
@@ -49,8 +52,6 @@ df_results <- rbind(df_results, result)
 }
 
 
-}
-
 ## macros
 random_integers <- sample(1:9, 85, replace=TRUE)
 vec <- c(6.2, random_integers)
@@ -68,9 +69,23 @@ df_results <- rbind(df_results, result)
 }
 
 
+## micros
+random_integers <- sample(1:9, 85, replace=TRUE)
+vec <- c(6.2, random_integers)
+micros(vec)
+
+vec1 <- c(5.1, sample(1:9, 85, replace = TRUE))
+row1 <- data.frame(t(vec1))
+row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+df <- rbind(row1, row2)
+
+df_results <- data.frame()
+for (i in 1:nrow(df)) {
+result <- micros(df[i,])
+df_results <- rbind(df_results, result)
 }
 
-## micros
+
 ## nutrients()
 ## quotient()
 ## macquotient()
