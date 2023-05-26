@@ -326,7 +326,7 @@ nutrients <- function(row) {
   vitamin.a_sum <- sum(fq(v1) * v11)
   folate_sum <- sum(fq(v1) * v12)
 
-  macros_results <- data.frame(calories = calories_sum,
+  nutrients_results <- data.frame(calories = calories_sum,
                                protein = protein_sum,
                                carbs = carb_sum,
                                fat = fat_sum,
@@ -338,7 +338,7 @@ nutrients <- function(row) {
                                vitamin.a = vitamin.a_sum,
                                folate = folate_sum)
 
-  return(macros_results)
+  return(nutrients_results)
 }
 
 
