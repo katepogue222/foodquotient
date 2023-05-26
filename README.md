@@ -13,6 +13,8 @@ The fq() function serves to convert coded frequency responses from the HSFFQ to 
 The grams() function uses the frequency responses and age of each participant to calculate the daily grams of each food consumed for each participant. Information about typical food consumption for different age groups and each respective food is used in this function and was gathered from open source USDA search tools. A dataframe identical in structure to the "age_freq" example dataframe is needed to plug into the grams() function. The function will output a dataframe with 85 columns and the same amount of inputed rows, with each value representing daily grams of each food consumed for that participant. 
 
 ### macros()
+The macros() function uses the age of each participant as well as their 85 frequency responses to calculate the total amount of protein, carbohydrates, and fat consumed per day for the participant. A dataframe identical in structure to the "age_freq" example dataframe is needed to plug into the macros() function. The function will output a dataframe with 3 columns labeled "protein", "carbs", and "fat", with an identical number of rows to the dataframe that was plugged into the function. 
+
 ### micros()
 ### nutrients()
 ### quotient()
@@ -30,7 +32,7 @@ test <- c(1,5,7,3,9,2,4,3,6,8,9)
 results<- fq(test)
 results
 
-##grams()
+## grams()
 random_integers <- sample(1:9, 85, replace=TRUE)
 vec <- c(6.2, random_integers)
 grams(vec)
@@ -48,6 +50,32 @@ df_results <- rbind(df_results, result)
 
 
 }
+
+## macros
+random_integers <- sample(1:9, 85, replace=TRUE)
+vec <- c(6.2, random_integers)
+macros(vec)
+
+vec1 <- c(5.1, sample(1:9, 85, replace = TRUE))
+row1 <- data.frame(t(vec1))
+row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+df <- rbind(row1, row2)
+
+df_results <- data.frame()
+for (i in 1:nrow(df)) {
+result <- macros(df[i,])
+df_results <- rbind(df_results, result)
+}
+
+
+}
+
+## micros
+## nutrients()
+## quotient()
+## macquotient()
+
+
 
 
 # Contributors
