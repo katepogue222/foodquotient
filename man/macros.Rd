@@ -7,20 +7,19 @@
 macros(row)
 }
 \arguments{
-\item{row}{vector with 86 entries consisting of 2 components
-    F1:F85 1-8, representing different frequency factor responses from the
-hsffq. These will be stored in columns 2-86 in the row you plug in
-    A value representing participant's age. This will be stored in column
-1 of the inputed row}
+\item{row}{vector with 86 entries consisting of 2 components f1:f85 1-8,
+representing different frequency factor responses from the hsffq. These will
+be stored in columns 2-86 in the row you plug in A value representing
+participant's age. This will be stored in column 1 of the inputed row}
 }
 \value{
-the row or dataframe returned will have 3 entries, representing
-total daily amounts of protein, carbohydrates, and fat for each participant
+the row or dataframe returned will have 3 entries, representing total
+  daily amounts of protein, carbohydrates, and fat for each participant
 }
 \description{
-The Macronutrients function takes the age of a participant and their
-responses on the hsffq to generate estimates of the participant's total daily
-protein, carbohydrate, and fat consumed for each food
+The Macronutrients function takes the age of a participant and their responses
+on the hsffq to generate estimates of the participant's total daily protein,
+carbohydrate, and fat consumed for each food
 }
 \examples{
 random_integers <- sample(1:8, 85, replace=TRUE)

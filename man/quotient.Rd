@@ -7,19 +7,18 @@
 quotient(row)
 }
 \arguments{
-\item{row}{contains two components.
-    F1:F85 1-8, representing different frequency factor responses from the
-hsffq. These will be stored in columns 2-86 in the row you plug in
-    A value representing participant's age. This will be stored in column
-1 of the inputed row}
+\item{row}{contains two components. f1:f85 1-8, representing different
+frequency factor responses from the hsffq. These will be stored in columns
+2-86 in the row you plug in A value representing participant's age. This
+will be stored in column 1 of the input row/}
 }
 \value{
 one value per participant will be returned, representing the food
-quotient for the indevidual
+  quotient for the individual
 }
 \description{
-The quotient function calculates individual level food quotients based on
-the individual's answers to the hsffq. This function is only recommended to
+The quotient function calculates individual level food quotients based on the
+individual's answers to the hsffq. This function is only recommended to
 calculate at the individual level.
 }
 \examples{

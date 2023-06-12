@@ -1,150 +1,149 @@
-
 #' Frequency Factor
-#'
 #'
 #' The Frequency Factor function converts values 1-8, representing different
 #' frequency factor responses from the hsffq, to average daily servings consumed
-#' for that indevidual.
+#' for that individual.
 #'
-#' @param F 1-8, representing different frequency factor responses from the
+#' @param f 1-8, representing different frequency factor responses from the
 #' hsffq. These can be in a dataframe, vector, or just single values
 #' @return a dataframe, vector, or single value of the same dimension as the
 #' input, with each position holding the average daily servings consumed
 #' for each food (columns) for each individual(rows).
 #' @export
-#'
 #' @examples
-#' test <- c(1,5,7,3,9,2,4,3,6,8)
-#' results<- fq(test)
-#' results
+#' test <- c(1, 5, 7, 3, 9, 2, 4, 3, 6, 8)
+#' fq(test)
 #'
-
-
-fq <- function(F) {
-  ifelse(F > 8, 6,
-         ifelse(F > 7, 4.5,
-                ifelse(F > 6, 2.5,
-                       ifelse(F > 5, 1,
-                              ifelse(F > 4, 0.8,
-                                     ifelse(F > 3, 0.43,
-                                            ifelse(F > 2, 0.14,
-                                                   ifelse(F > 1, 0.08, 0)
-                                            )
-                                     )
-                              )
-                       )
-                )
-         )
-  )
+fq <- function(f) {
+  if (length(f) > 1) return(vapply(f, fq, double(1)))
+  stopifnot(is.numeric(f))
+  if (f > 8) return(6.00)
+  if (f > 7) return(4.50)
+  if (f > 6) return(2.50)
+  if (f > 5) return(1.00)
+  if (f > 4) return(0.80)
+  if (f > 3) return(0.43)
+  if (f > 2) return(0.14)
+  if (f > 1) return(0.08)
+  0
 }
+
+
+
+
 
 #' Grams
 #'
-#' The grams function takes the age of a participant and their responses
-#' on the hsffq to generate an estimate of the participant's total daily
-#' grams consumed for each food
+#' The grams function takes the age of a participant and their responses on the
+#' hsffq to generate an estimate of the participant's total daily grams consumed
+#' for each food
 #'
-#' @param row contains two components.
-#'     F1:F85 1-8, representing different frequency factor responses from the
-#' hsffq. These will be stored in columns 2-86 in the row you plug in
-#'     A value representing participant's age. This will be stored in column
-#' 1 of the inputed row
+#' @param row contains two components. f1:f85 1-8, representing different
+#'   frequency factor responses from the hsffq. These will be stored in columns
+#'   2-86 in the row you plug in A value representing participant's age. This
+#'   will be stored in column 1 of the inputed row.
 #' @return the row returned will have 85 entries, representing each of the 85
-#' foods on the hsffq for one participant. Each entry represents the total daily
-#' grams of that food consumed for that individual
+#'   foods on the hsffq for one participant. Each entry represents the total
+#'   daily grams of that food consumed for that individual.
 #' @export
-#'
 #' @examples
-#'random_integers <- sample(1:8, 85, replace=TRUE)
-#'vec <- c(6.2, random_integers)
-#'grams(vec)
 #'
-#'vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#'row1 <- data.frame(t(vec1))
-#'row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#'df <- rbind(row1, row2)
+#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' vec <- c(6.2, random_integers)
+#' grams(vec)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- grams(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(2)
+#'
+#' grams(df)
 #'
 #'
-
-
-
-
 grams <- function(row) {
 
-  a <- row[1]
+  if (is.data.frame(row)) {
 
-  if (a >= 2 & a < 5) {
-    v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_2.5
-  } else if (a >= 5 & a <= 11) {
-    v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_6.11
+    for (i in 1:nrow(row)) {
+      age <- row[i,1]
+      multiplier <- if (2 <= age && age < 5) hsffq()$gm_per_serv_2.5 else hsffq()$gm_per_serv_6.11
+      row[i,2:ncol(row)] <- fq(row[i,2:ncol(row)]) * multiplier
+    } # end i
+
   } else {
-    print("out of range")
-    return(NULL)
+
+    row <- as.data.frame(t(row))
+
+    age <- row[1]
+
+    if (age >= 2 & age < 5) {
+      v1 <- row[2:86]
+      v2 <- hsffq()$gm_per_serv_2.5
+    } else if (age >= 5 & age <= 11) {
+      v1 <- row[2:86]
+      v2 <- hsffq()$gm_per_serv_6.11
+    } else {
+      stop("`grams()` is only implemented for ages <= 11.")
+    }
+
+    fq(v1) * v2
+
   }
 
-  output <- fq(v1) * v2
-
-  return(output)
 }
 
 
 
 #' Macronutrients
 #'
-#' The Macronutrients function takes the age of a participant and their
-#' responses on the hsffq to generate estimates of the participant's total daily
-#' protein, carbohydrate, and fat consumed for each food
+#' The Macronutrients function takes the age of a participant and their responses
+#' on the hsffq to generate estimates of the participant's total daily protein,
+#' carbohydrate, and fat consumed for each food
 #'
-#' @param row vector with 86 entries consisting of 2 components
-#'     F1:F85 1-8, representing different frequency factor responses from the
-#' hsffq. These will be stored in columns 2-86 in the row you plug in
-#'     A value representing participant's age. This will be stored in column
-#' 1 of the inputed row
-#' @return the row or dataframe returned will have 3 entries, representing
-#' total daily amounts of protein, carbohydrates, and fat for each participant
+#' @param row vector with 86 entries consisting of 2 components f1:f85 1-8,
+#'   representing different frequency factor responses from the hsffq. These will
+#'   be stored in columns 2-86 in the row you plug in A value representing
+#'   participant's age. This will be stored in column 1 of the inputed row
+#' @return the row or dataframe returned will have 3 entries, representing total
+#'   daily amounts of protein, carbohydrates, and fat for each participant
 #' @export
 #'
 #' @examples
-#'random_integers <- sample(1:8, 85, replace=TRUE)
-#'vec <- c(6.2, random_integers)
-#'macros(vec)
+#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' vec <- c(6.2, random_integers)
+#' macros(vec)
 #'
-#'vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#'row1 <- data.frame(t(vec1))
-#'row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#'df <- rbind(row1, row2)
+#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
+#' row1 <- data.frame(t(vec1))
+#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+#' df <- rbind(row1, row2)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- macros(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' df_results <- data.frame()
+#' for (i in 1:nrow(df)) {
+#' result <- macros(df[i,])
+#' df_results <- rbind(df_results, result)
+#' }
 #'
 #'
-
 macros <- function(row) {
-
 
   a <- row[1]
 
   if (a >= 2 & a <= 5) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_2.5 * hsffq$protein
-    v3 <- hsffq$gm_per_serv_2.5 * hsffq$carb
-    v4 <- hsffq$gm_per_serv_2.5 * hsffq$fat
+    v2 <- hsffq()$gm_per_serv_2.5 * hsffq()$protein
+    v3 <- hsffq()$gm_per_serv_2.5 * hsffq()$carb
+    v4 <- hsffq()$gm_per_serv_2.5 * hsffq()$fat
   } else if (a >= 5 & a <= 11) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_6.11 * hsffq$protein
-    v3 <- hsffq$gm_per_serv_6.11 * hsffq$carb
-    v4 <- hsffq$gm_per_serv_6.11 * hsffq$fat
+    v2 <- hsffq()$gm_per_serv_6.11 * hsffq()$protein
+    v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$carb
+    v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$fat
   } else {
     print("out of range")
     return(NULL)
@@ -154,11 +153,12 @@ macros <- function(row) {
   carb_sum <- sum(fq(v1) * v3)
   fat_sum <- sum(fq(v1) * v4)
 
-  macros_results <- data.frame(protein = protein_sum,
-                               carbs = carb_sum,
-                               fat = fat_sum)
+  data.frame(
+    "protein" = protein_sum,
+    "carbs" = carb_sum,
+    "fat" = fat_sum
+  )
 
-  return(macros_results)
 }
 
 #' Micronutrients
@@ -167,30 +167,28 @@ macros <- function(row) {
 #' on the hsffq to generate an estimate of the participant's total daily
 #' micronutrients consumed for each food
 #'
-#' @param row contains two components.
-#'     F1:F85 1-8, representing different frequency factor responses from the
-#' hsffq. These will be stored in columns 2-86 in the row you plug in
-#'.   A value representing participant's age. This will be stored in column
-#' 1 of the inputed row
-#' @return the row or dataframe returned will have 7 entries, representing
-#' total daily amounts of 7 micronutrients for each participant
+#' @param row contains two components. f1:f85 1-8, representing different
+#'   frequency factor responses from the hsffq. These will be stored in columns
+#'   2-86 in the row you plug in .   A value representing participant's age. This
+#'   will be stored in column 1 of the inputed row
+#' @return the row or dataframe returned will have 7 entries, representing total
+#'   daily amounts of 7 micronutrients for each participant
 #' @export
-#'
 #' @examples
-#'random_integers <- sample(1:8, 85, replace=TRUE)
-#'vec <- c(6.2, random_integers)
-#'micros(vec)
+#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' vec <- c(6.2, random_integers)
+#' micros(vec)
 #'
-#'vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#'row1 <- data.frame(t(vec1))
-#'row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#'df <- rbind(row1, row2)
+#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
+#' row1 <- data.frame(t(vec1))
+#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+#' df <- rbind(row1, row2)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- micros(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' df_results <- data.frame()
+#' for (i in 1:nrow(df)) {
+#' result <- micros(df[i,])
+#' df_results <- rbind(df_results, result)
+#' }
 #'
 #'
 
@@ -202,22 +200,22 @@ micros <- function(row) {
 
   if (a >= 2 & a <= 5) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_2.5 * hsffq$calcium
-    v3 <- hsffq$gm_per_serv_2.5 * hsffq$iron
-    v4 <- hsffq$gm_per_serv_2.5 * hsffq$zinc
-    v5 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.c
-    v6 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.b6
-    v7 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.a
-    v8 <- hsffq$gm_per_serv_2.5 * hsffq$folate
+    v2 <- hsffq()$gm_per_serv_2.5 * hsffq()$calcium
+    v3 <- hsffq()$gm_per_serv_2.5 * hsffq()$iron
+    v4 <- hsffq()$gm_per_serv_2.5 * hsffq()$zinc
+    v5 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.c
+    v6 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.b6
+    v7 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.a
+    v8 <- hsffq()$gm_per_serv_2.5 * hsffq()$folate
   } else if (a >= 5 & a <= 11) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_6.11 * hsffq$calcium
-    v3 <- hsffq$gm_per_serv_6.11 * hsffq$iron
-    v4 <- hsffq$gm_per_serv_6.11 * hsffq$zinc
-    v5 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.c
-    v6 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.b6
-    v7 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.a
-    v8 <- hsffq$gm_per_serv_6.11 * hsffq$folate
+    v2 <- hsffq()$gm_per_serv_6.11 * hsffq()$calcium
+    v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$iron
+    v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$zinc
+    v5 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.c
+    v6 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.b6
+    v7 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.a
+    v8 <- hsffq()$gm_per_serv_6.11 * hsffq()$folate
   } else {
     print("out of range")
     return(NULL)
@@ -247,35 +245,33 @@ micros <- function(row) {
 
 #' Nutrients
 #'
-#' The Nutrients function takes the age of a participant and their responses
-#' on the hsffq to generate an estimate of the participant's total daily
+#' The Nutrients function takes the age of a participant and their responses on
+#' the hsffq to generate an estimate of the participant's total daily
 #' micronutrients, macronutrients, and calories consumed for each food
 #'
-#' @param  row contains two components.
-#'     F1:F85 1-8, representing different frequency factor responses from the
-#' hsffq. These will be stored in columns 2-86 in the row you plug in
-#'     A value representing participant's age. This will be stored in column
-#' 1 of the inputed row
+#' @param  row /contains two components. f1:f85 1-8, representing different
+#'   frequency factor responses from the hsffq. These will be stored in columns
+#'   2-86 in the row you plug in A value representing participant's age. This
+#'   will be stored in column 1 of the inputed row
 #' @return the row or dataframe returned will have 11 entries, representing
-#' total daily amounts of 7 micronutrients, 3 macronutrients, and calories
-#' for each participant. These columns will be labeled
+#'   total daily amounts of 7 micronutrients, 3 macronutrients, and calories for
+#'   each participant. These columns will be labeled
 #' @export
-#'
 #' @examples
-#'random_integers <- sample(1:8, 85, replace=TRUE)
-#'vec <- c(6.2, random_integers)
-#'nutrients(vec)
+#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' vec <- c(6.2, random_integers)
+#' nutrients(vec)
 #'
-#'vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#'row1 <- data.frame(t(vec1))
-#'row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#'df <- rbind(row1, row2)
+#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
+#' row1 <- data.frame(t(vec1))
+#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+#' df <- rbind(row1, row2)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- nutrients(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' df_results <- data.frame()
+#' for (i in 1:nrow(df)) {
+#' result <- nutrients(df[i,])
+#' df_results <- rbind(df_results, result)
+#' }
 #'
 #'
 
@@ -285,30 +281,30 @@ nutrients <- function(row) {
 
   if (a >= 2 & a <= 5) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_2.5 * hsffq$calories
-    v3 <- hsffq$gm_per_serv_2.5 * hsffq$protein
-    v4 <- hsffq$gm_per_serv_2.5 * hsffq$carb
-    v5 <- hsffq$gm_per_serv_2.5 * hsffq$fat
-    v6 <- hsffq$gm_per_serv_2.5 * hsffq$calcium
-    v7 <- hsffq$gm_per_serv_2.5 * hsffq$iron
-    v8 <- hsffq$gm_per_serv_2.5 * hsffq$zinc
-    v9 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.c
-    v10 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.b6
-    v11 <- hsffq$gm_per_serv_2.5 * hsffq$vitamin.a
-    v12 <- hsffq$gm_per_serv_2.5 * hsffq$folate
+    v2 <- hsffq()$gm_per_serv_2.5 * hsffq()$calories
+    v3 <- hsffq()$gm_per_serv_2.5 * hsffq()$protein
+    v4 <- hsffq()$gm_per_serv_2.5 * hsffq()$carb
+    v5 <- hsffq()$gm_per_serv_2.5 * hsffq()$fat
+    v6 <- hsffq()$gm_per_serv_2.5 * hsffq()$calcium
+    v7 <- hsffq()$gm_per_serv_2.5 * hsffq()$iron
+    v8 <- hsffq()$gm_per_serv_2.5 * hsffq()$zinc
+    v9 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.c
+    v10 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.b6
+    v11 <- hsffq()$gm_per_serv_2.5 * hsffq()$vitamin.a
+    v12 <- hsffq()$gm_per_serv_2.5 * hsffq()$folate
   } else if (a >= 5 & a <= 11) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_6.11 * hsffq$calories
-    v3 <- hsffq$gm_per_serv_6.11 * hsffq$protein
-    v4 <- hsffq$gm_per_serv_6.11 * hsffq$carb
-    v5 <- hsffq$gm_per_serv_6.11 * hsffq$fat
-    v6 <- hsffq$gm_per_serv_6.11 * hsffq$calcium
-    v7 <- hsffq$gm_per_serv_6.11 * hsffq$iron
-    v8 <- hsffq$gm_per_serv_6.11 * hsffq$zinc
-    v9 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.c
-    v10 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.b6
-    v11 <- hsffq$gm_per_serv_6.11 * hsffq$vitamin.a
-    v12 <- hsffq$gm_per_serv_6.11 * hsffq$folate
+    v2 <- hsffq()$gm_per_serv_6.11 * hsffq()$calories
+    v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$protein
+    v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$carb
+    v5 <- hsffq()$gm_per_serv_6.11 * hsffq()$fat
+    v6 <- hsffq()$gm_per_serv_6.11 * hsffq()$calcium
+    v7 <- hsffq()$gm_per_serv_6.11 * hsffq()$iron
+    v8 <- hsffq()$gm_per_serv_6.11 * hsffq()$zinc
+    v9 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.c
+    v10 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.b6
+    v11 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.a
+    v12 <- hsffq()$gm_per_serv_6.11 * hsffq()$folate
   } else {
     print("out of range")
     return(NULL)
@@ -344,19 +340,18 @@ nutrients <- function(row) {
 
 #' Food Quotient Based on Macronutrients
 #'
-#' The macquotient function calculates a food quotient for a participant
-#' based on average daily protein, carbs, and fat consumed for an individual or
-#' a group. In contrast to the quotient function, macquotient is able to
-#' generate reliable average food quotients for a group of people rather than
-#' only individual level. Group level estimates are reccomended in some studies
-#' to control for response bias.
+#' The macquotient function calculates a food quotient for a participant based
+#' on average daily protein, carbs, and fat consumed for an individual or a
+#' group. In contrast to the quotient function, macquotient is able to generate
+#' reliable average food quotients for a group of people rather than only
+#' individual level. Group level estimates are reccomended in some studies to
+#' control for response b/ias.
 #'
-#' @param  row contains three components.
-#'     p average daily grams of protein consumed
-#'     f average daily grams of fat consumed
-#'     c average daily grams of carbohydrates consumed
+#' @param  row contains three components. p average daily grams of protein
+#'   consumed f average daily grams of fat consumed c/ average daily grams of
+#'   carbohydrates consumed
 #' @return one value per participant will be returned, representing the food
-#' quotient for the indevidual
+#'   quotient for the indevidual
 #' @export
 #'
 #' @examples
@@ -364,15 +359,15 @@ nutrients <- function(row) {
 #' macquotient(vec)
 #'
 #'
-#'vec1 <- c(34.5,43, 212.4)
-#'vec2 <- c(40.1,52, 240)
-#'df <- rbind(vec1, vec2)
+#' vec1 <- c(34.5,43, 212.4)
+#' vec2 <- c(40.1,52, 240)
+#' df <- rbind(vec1, vec2)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- macquotient(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' df_results <- data.frame()
+#' for (i in 1:nrow(df)) {
+#' result <- macquotient(df[i,])
+#' df_results <- rbind(df_results, result)
+#' }
 #'
 #'
 
@@ -401,34 +396,33 @@ macquotient <- function(row) {
 
 #' Food quotient based on hsffq results
 #'
-#' The quotient function calculates individual level food quotients based on
-#' the individual's answers to the hsffq. This function is only recommended to
+#' The quotient function calculates individual level food quotients based on the
+#' individual's answers to the hsffq. This function is only recommended to
 #' calculate at the individual level.
 #'
-#' @param  row contains two components.
-#'     F1:F85 1-8, representing different frequency factor responses from the
-#' hsffq. These will be stored in columns 2-86 in the row you plug in
-#'     A value representing participant's age. This will be stored in column
-#' 1 of the inputed row
+#' @param  row contains two components. f1:f85 1-8, representing different
+#'   frequency factor responses from the hsffq. These will be stored in columns
+#'   2-86 in the row you plug in A value representing participant's age. This
+#'   will be stored in column 1 of the input row/
 #' @return one value per participant will be returned, representing the food
-#' quotient for the indevidual
+#'   quotient for the individual
 #' @export
 #'
 #' @examples
-#'random_integers <- sample(1:8, 85, replace=TRUE)
-#'vec <- c(6.2, random_integers)
-#'quotient(vec)
+#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' vec <- c(6.2, random_integers)
+#' quotient(vec)
 #'
-#'vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#'row1 <- data.frame(t(vec1))
-#'row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#'df <- rbind(row1, row2)
+#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
+#' row1 <- data.frame(t(vec1))
+#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
+#' df <- rbind(row1, row2)
 #'
-#'df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- quotient(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' df_results <- data.frame()
+#' for (i in 1:nrow(df)) {
+#' result <- quotient(df[i,])
+#' df_results <- rbind(df_results, result)
+#' }
 #'
 #'
 #'
@@ -441,14 +435,14 @@ quotient <- function(row) {
 
   if (a >= 2 & a <= 5) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_2.5 * hsffq$protein
-    v3 <- hsffq$gm_per_serv_2.5 * hsffq$carb
-    v4 <- hsffq$gm_per_serv_2.5 * hsffq$fat
+    v2 <- hsffq()$gm_per_serv_2.5 * hsffq()$protein
+    v3 <- hsffq()$gm_per_serv_2.5 * hsffq()$carb
+    v4 <- hsffq()$gm_per_serv_2.5 * hsffq()$fat
   } else if (a >= 5 & a <= 11) {
     v1 <- row[2:86]
-    v2 <- hsffq$gm_per_serv_6.11 * hsffq$protein
-    v3 <- hsffq$gm_per_serv_6.11 * hsffq$carb
-    v4 <- hsffq$gm_per_serv_6.11 * hsffq$fat
+    v2 <- hsffq()$gm_per_serv_6.11 * hsffq()$protein
+    v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$carb
+    v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$fat
   } else {
     print("out of range")
     return(NULL)
@@ -483,7 +477,7 @@ quotient <- function(row) {
 
 #' Frequency Factors for CATALYST Project Children
 #'
-#' A small set of data including 32 children living in the united states. F1:F85
+#' A small set of data including 32 children living in the united states. f1:f85
 #' represents the frequency with which participants consumed 85 respective foods.
 #' Numbers 1-8 correspond to the following:
 #' 1: never
@@ -499,91 +493,91 @@ quotient <- function(row) {
 #' @format ## `freq`
 #' A data frame with 32 rows and 85 columns:
 #' \describe{
-#'   \item{F1}{milk frequency factor}
-#'   \item{F2}{hot chocolate frequency factor}
-#'   \item{F3}{cheese frequency factor}
-#'   \item{F4}{yogurt frequency frequency factor}
-#'   \item{F5}{ice cream frequency frequency factor}
-#'   \item{F6}{pudding frequency factor}
-#'   \item{F7}{orange juice frequency factor}
-#'   \item{F8}{other juice frequency factor}
-#'   \item{F9}{fruit drink frequency factor}
-#'   \item{F10}{banana frequency factor}
-#'   \item{F11}{peaches frequency factor}
-#'   \item{F12}{mixed fruit frequency factor}
-#'   \item{F13}{orange frequency factor}
-#'   \item{F14}{apple and pear frequency factor}
-#'   \item{F15}{applesauce frequency factor}
-#'   \item{F16}{grapes frequency factor}
-#'   \item{F17}{strawberries frequency factor}
-#'   \item{F18}{melon frequency factor}
-#'   \item{F19}{pineapple frequency factor}
-#'   \item{F20}{raisins frequency factor}
-#'   \item{F21}{corn frequency factor}
-#'   \item{F22}{peas frequency factor}
-#'   \item{F23}{tomato frequency factor}
-#'   \item{F24}{peppers frequency factor}
-#'   \item{F25}{carrot frequency factor}
-#'   \item{F26}{broccoli frequency factor}
-#'   \item{F27}{green beans frequency factor}
-#'   \item{F28}{spinach frequency factor}
-#'   \item{F29}{greens frequency factor}
-#'   \item{F30}{mixed vegetable frequency factor}
-#'   \item{F31}{squash frequency factor}
-#'   \item{F32}{zucchini frequency factor}
-#'   \item{F33}{fried potatoes frequency factor}
-#'   \item{F34}{other potaoes frequency factor}
-#'   \item{F35}{sweet potatoes frequency factor}
-#'   \item{F36}{cabbage frequency factor}
-#'   \item{F37}{lettuce frequency factor}
-#'   \item{F38}{mayonaise frequency factor}
-#'   \item{F39}{chips frequency factor}
-#'   \item{F40}{popcorn frequency factor}
-#'   \item{F41}{crackers frequency factor}
-#'   \item{F42}{nuts frequency factor}
-#'   \item{F43}{cookies frequency factor}
-#'   \item{F44}{cake frequency factor}
-#'   \item{F45}{pie frequency factor}
-#'   \item{F46}{jello frequency factor}
-#'   \item{F47}{chocolate frequency factor}
-#'   \item{F48}{candy frequency factor}
-#'   \item{F49}{coffee frequency factor}
-#'   \item{F50}{soda frequency factor}
-#'   \item{F51}{sugarfree soda frequency factor}
-#'   \item{F52}{beans frequency factor}
-#'   \item{F53}{rice frequency factor}
-#'   \item{F54}{pasta frequency factor}
-#'   \item{F55}{pizza frequency factor}
-#'   \item{F56}{tacos frequency factor}
-#'   \item{F57}{mac and cheese frequency factor}
-#'   \item{F58}{hot dogs frequency factor}
-#'   \item{F59}{sausage frequency factor}
-#'   \item{F60}{hamburger frequency factor}
-#'   \item{F61}{tuna frequency factor}
-#'   \item{F62}{fried fish frequency factor}
-#'   \item{F63}{other fish frequency factor}
-#'   \item{F64}{cold cuts frequency factor}
-#'   \item{F65}{chicken nuggets frequency factor}
-#'   \item{F66}{other chicken frequency factor}
-#'   \item{F67}{pork frequency factor}
-#'   \item{F68}{beef frequency factor}
-#'   \item{F69}{organ meats frequency factor}
-#'   \item{F70}{penut butter frequency factor}
-#'   \item{F71}{bread frequency factor}
-#'   \item{F72}{butter frequency factor}
-#'   \item{F73}{margarine frequency factor}
-#'   \item{F74}{Cvegetabele soup frequency factor}
-#'   \item{F75}{soup frequency factor}
-#'   \item{F76}{tortilla frequency factor}
-#'   \item{F77}{eggs frequency factor}
-#'   \item{F78}{bacon frequency factor}
-#'   \item{F79}{hot cereal frequency factor}
-#'   \item{F80}{cold cereal frequency factor}
-#'   \item{F81}{donuts frequency factor}
-#'   \item{F82}{muffins frequency factor}
-#'   \item{F83}{pankake frequency factor}
-#'   \item{F84}{bagel frequency factor}
-#'   \item{F85}{biscuit frequency factor}
+#'   \item{f1}{milk frequency factor}
+#'   \item{f2}{hot chocolate frequency factor}
+#'   \item{f3}{cheese frequency factor}
+#'   \item{f4}{yogurt frequency frequency factor}
+#'   \item{f5}{ice cream frequency frequency factor}
+#'   \item{f6}{pudding frequency factor}
+#'   \item{f7}{orange juice frequency factor}
+#'   \item{f8}{other juice frequency factor}
+#'   \item{f9}{fruit drink frequency factor}
+#'   \item{f10}{banana frequency factor}
+#'   \item{f11}{peaches frequency factor}
+#'   \item{f12}{mixed fruit frequency factor}
+#'   \item{f13}{orange frequency factor}
+#'   \item{f14}{apple and pear frequency factor}
+#'   \item{f15}{applesauce frequency factor}
+#'   \item{f16}{grapes frequency factor}
+#'   \item{f17}{strawberries frequency factor}
+#'   \item{f18}{melon frequency factor}
+#'   \item{f19}{pineapple frequency factor}
+#'   \item{f20}{raisins frequency factor}
+#'   \item{f21}{corn frequency factor}
+#'   \item{f22}{peas frequency factor}
+#'   \item{f23}{tomato frequency factor}
+#'   \item{f24}{peppers frequency factor}
+#'   \item{f25}{carrot frequency factor}
+#'   \item{f26}{broccoli frequency factor}
+#'   \item{f27}{green beans frequency factor}
+#'   \item{f28}{spinach frequency factor}
+#'   \item{f29}{greens frequency factor}
+#'   \item{f30}{mixed vegetable frequency factor}
+#'   \item{f31}{squash frequency factor}
+#'   \item{f32}{zucchini frequency factor}
+#'   \item{f33}{fried potatoes frequency factor}
+#'   \item{f34}{other potaoes frequency factor}
+#'   \item{f35}{sweet potatoes frequency factor}
+#'   \item{f36}{cabbage frequency factor}
+#'   \item{f37}{lettuce frequency factor}
+#'   \item{f38}{mayonaise frequency factor}
+#'   \item{f39}{chips frequency factor}
+#'   \item{f40}{popcorn frequency factor}
+#'   \item{f41}{crackers frequency factor}
+#'   \item{f42}{nuts frequency factor}
+#'   \item{f43}{cookies frequency factor}
+#'   \item{f44}{cake frequency factor}
+#'   \item{f45}{pie frequency factor}
+#'   \item{f46}{jello frequency factor}
+#'   \item{f47}{chocolate frequency factor}
+#'   \item{f48}{candy frequency factor}
+#'   \item{f49}{coffee frequency factor}
+#'   \item{f50}{soda frequency factor}
+#'   \item{f51}{sugarfree soda frequency factor}
+#'   \item{f52}{beans frequency factor}
+#'   \item{f53}{rice frequency factor}
+#'   \item{f54}{pasta frequency factor}
+#'   \item{f55}{pizza frequency factor}
+#'   \item{f56}{tacos frequency factor}
+#'   \item{f57}{mac and cheese frequency factor}
+#'   \item{f58}{hot dogs frequency factor}
+#'   \item{f59}{sausage frequency factor}
+#'   \item{f60}{hamburger frequency factor}
+#'   \item{f61}{tuna frequency factor}
+#'   \item{f62}{fried fish frequency factor}
+#'   \item{f63}{other fish frequency factor}
+#'   \item{f64}{cold cuts frequency factor}
+#'   \item{f65}{chicken nuggets frequency factor}
+#'   \item{f66}{other chicken frequency factor}
+#'   \item{f67}{pork frequency factor}
+#'   \item{f68}{beef frequency factor}
+#'   \item{f69}{organ meats frequency factor}
+#'   \item{f70}{penut butter frequency factor}
+#'   \item{f71}{bread frequency factor}
+#'   \item{f72}{butter frequency factor}
+#'   \item{f73}{margarine frequency factor}
+#'   \item{f74}{Cvegetabele soup frequency factor}
+#'   \item{f75}{soup frequency factor}
+#'   \item{f76}{tortilla frequency factor}
+#'   \item{f77}{eggs frequency factor}
+#'   \item{f78}{bacon frequency factor}
+#'   \item{f79}{hot cereal frequency factor}
+#'   \item{f80}{cold cereal frequency factor}
+#'   \item{f81}{donuts frequency factor}
+#'   \item{f82}{muffins frequency factor}
+#'   \item{f83}{pankake frequency factor}
+#'   \item{f84}{bagel frequency factor}
+#'   \item{f85}{biscuit frequency factor}
 #'
 #'
 #'
@@ -600,7 +594,7 @@ quotient <- function(row) {
 #' Frequency Factors for CATALYST Project Children with Age of Participant
 #'
 #' A small set of food frequency questionaire data including 32 children living in the United States.
-#'F1:F85 represents the frequency with which participants consumed 85 respective foods.
+#'f1:f85 represents the frequency with which participants consumed 85 respective foods.
 #' Numbers 1-8 correspond to the following:
 #' 1: never
 #' 2: 1-3 times per month
@@ -616,91 +610,91 @@ quotient <- function(row) {
 #' A data frame with 32 rows and 85 columns:
 #' \describe{
 #'   \item{a}{age of participant}
-#'   \item{F1}{milk frequency factor}
-#'   \item{F2}{hot chocolate frequency factor}
-#'   \item{F3}{cheese frequency factor}
-#'   \item{F4}{yogurt frequency frequency factor}
-#'   \item{F5}{ice cream frequency frequency factor}
-#'   \item{F6}{pudding frequency factor}
-#'   \item{F7}{orange juice frequency factor}
-#'   \item{F8}{other juice frequency factor}
-#'   \item{F9}{fruit drink frequency factor}
-#'   \item{F10}{banana frequency factor}
-#'   \item{F11}{peaches frequency factor}
-#'   \item{F12}{mixed fruit frequency factor}
-#'   \item{F13}{orange frequency factor}
-#'   \item{F14}{apple and pear frequency factor}
-#'   \item{F15}{applesauce frequency factor}
-#'   \item{F16}{grapes frequency factor}
-#'   \item{F17}{strawberries frequency factor}
-#'   \item{F18}{melon frequency factor}
-#'   \item{F19}{pineapple frequency factor}
-#'   \item{F20}{raisins frequency factor}
-#'   \item{F21}{corn frequency factor}
-#'   \item{F22}{peas frequency factor}
-#'   \item{F23}{tomato frequency factor}
-#'   \item{F24}{peppers frequency factor}
-#'   \item{F25}{carrot frequency factor}
-#'   \item{F26}{broccoli frequency factor}
-#'   \item{F27}{green beans frequency factor}
-#'   \item{F28}{spinach frequency factor}
-#'   \item{F29}{greens frequency factor}
-#'   \item{F30}{mixed vegetable frequency factor}
-#'   \item{F31}{squash frequency factor}
-#'   \item{F32}{zucchini frequency factor}
-#'   \item{F33}{fried potatoes frequency factor}
-#'   \item{F34}{other potaoes frequency factor}
-#'   \item{F35}{sweet potatoes frequency factor}
-#'   \item{F36}{cabbage frequency factor}
-#'   \item{F37}{lettuce frequency factor}
-#'   \item{F38}{mayonaise frequency factor}
-#'   \item{F39}{chips frequency factor}
-#'   \item{F40}{popcorn frequency factor}
-#'   \item{F41}{crackers frequency factor}
-#'   \item{F42}{nuts frequency factor}
-#'   \item{F43}{cookies frequency factor}
-#'   \item{F44}{cake frequency factor}
-#'   \item{F45}{pie frequency factor}
-#'   \item{F46}{jello frequency factor}
-#'   \item{F47}{chocolate frequency factor}
-#'   \item{F48}{candy frequency factor}
-#'   \item{F49}{coffee frequency factor}
-#'   \item{F50}{soda frequency factor}
-#'   \item{F51}{sugarfree soda frequency factor}
-#'   \item{F52}{beans frequency factor}
-#'   \item{F53}{rice frequency factor}
-#'   \item{F54}{pasta frequency factor}
-#'   \item{F55}{pizza frequency factor}
-#'   \item{F56}{tacos frequency factor}
-#'   \item{F57}{mac and cheese frequency factor}
-#'   \item{F58}{hot dogs frequency factor}
-#'   \item{F59}{sausage frequency factor}
-#'   \item{F60}{hamburger frequency factor}
-#'   \item{F61}{tuna frequency factor}
-#'   \item{F62}{fried fish frequency factor}
-#'   \item{F63}{other fish frequency factor}
-#'   \item{F64}{cold cuts frequency factor}
-#'   \item{F65}{chicken nuggets frequency factor}
-#'   \item{F66}{other chicken frequency factor}
-#'   \item{F67}{pork frequency factor}
-#'   \item{F68}{beef frequency factor}
-#'   \item{F69}{organ meats frequency factor}
-#'   \item{F70}{penut butter frequency factor}
-#'   \item{F71}{bread frequency factor}
-#'   \item{F72}{butter frequency factor}
-#'   \item{F73}{margarine frequency factor}
-#'   \item{F74}{Cvegetabele soup frequency factor}
-#'   \item{F75}{soup frequency factor}
-#'   \item{F76}{tortilla frequency factor}
-#'   \item{F77}{eggs frequency factor}
-#'   \item{F78}{bacon frequency factor}
-#'   \item{F79}{hot cereal frequency factor}
-#'   \item{F80}{cold cereal frequency factor}
-#'   \item{F81}{donuts frequency factor}
-#'   \item{F82}{muffins frequency factor}
-#'   \item{F83}{pankake frequency factor}
-#'   \item{F84}{bagel frequency factor}
-#'   \item{F85}{biscuit frequency factor}
+#'   \item{f1}{milk frequency factor}
+#'   \item{f2}{hot chocolate frequency factor}
+#'   \item{f3}{cheese frequency factor}
+#'   \item{f4}{yogurt frequency frequency factor}
+#'   \item{f5}{ice cream frequency frequency factor}
+#'   \item{f6}{pudding frequency factor}
+#'   \item{f7}{orange juice frequency factor}
+#'   \item{f8}{other juice frequency factor}
+#'   \item{f9}{fruit drink frequency factor}
+#'   \item{f10}{banana frequency factor}
+#'   \item{f11}{peaches frequency factor}
+#'   \item{f12}{mixed fruit frequency factor}
+#'   \item{f13}{orange frequency factor}
+#'   \item{f14}{apple and pear frequency factor}
+#'   \item{f15}{applesauce frequency factor}
+#'   \item{f16}{grapes frequency factor}
+#'   \item{f17}{strawberries frequency factor}
+#'   \item{f18}{melon frequency factor}
+#'   \item{f19}{pineapple frequency factor}
+#'   \item{f20}{raisins frequency factor}
+#'   \item{f21}{corn frequency factor}
+#'   \item{f22}{peas frequency factor}
+#'   \item{f23}{tomato frequency factor}
+#'   \item{f24}{peppers frequency factor}
+#'   \item{f25}{carrot frequency factor}
+#'   \item{f26}{broccoli frequency factor}
+#'   \item{f27}{green beans frequency factor}
+#'   \item{f28}{spinach frequency factor}
+#'   \item{f29}{greens frequency factor}
+#'   \item{f30}{mixed vegetable frequency factor}
+#'   \item{f31}{squash frequency factor}
+#'   \item{f32}{zucchini frequency factor}
+#'   \item{f33}{fried potatoes frequency factor}
+#'   \item{f34}{other potaoes frequency factor}
+#'   \item{f35}{sweet potatoes frequency factor}
+#'   \item{f36}{cabbage frequency factor}
+#'   \item{f37}{lettuce frequency factor}
+#'   \item{f38}{mayonaise frequency factor}
+#'   \item{f39}{chips frequency factor}
+#'   \item{f40}{popcorn frequency factor}
+#'   \item{f41}{crackers frequency factor}
+#'   \item{f42}{nuts frequency factor}
+#'   \item{f43}{cookies frequency factor}
+#'   \item{f44}{cake frequency factor}
+#'   \item{f45}{pie frequency factor}
+#'   \item{f46}{jello frequency factor}
+#'   \item{f47}{chocolate frequency factor}
+#'   \item{f48}{candy frequency factor}
+#'   \item{f49}{coffee frequency factor}
+#'   \item{f50}{soda frequency factor}
+#'   \item{f51}{sugarfree soda frequency factor}
+#'   \item{f52}{beans frequency factor}
+#'   \item{f53}{rice frequency factor}
+#'   \item{f54}{pasta frequency factor}
+#'   \item{f55}{pizza frequency factor}
+#'   \item{f56}{tacos frequency factor}
+#'   \item{f57}{mac and cheese frequency factor}
+#'   \item{f58}{hot dogs frequency factor}
+#'   \item{f59}{sausage frequency factor}
+#'   \item{f60}{hamburger frequency factor}
+#'   \item{f61}{tuna frequency factor}
+#'   \item{f62}{fried fish frequency factor}
+#'   \item{f63}{other fish frequency factor}
+#'   \item{f64}{cold cuts frequency factor}
+#'   \item{f65}{chicken nuggets frequency factor}
+#'   \item{f66}{other chicken frequency factor}
+#'   \item{f67}{pork frequency factor}
+#'   \item{f68}{beef frequency factor}
+#'   \item{f69}{organ meats frequency factor}
+#'   \item{f70}{penut butter frequency factor}
+#'   \item{f71}{bread frequency factor}
+#'   \item{f72}{butter frequency factor}
+#'   \item{f73}{margarine frequency factor}
+#'   \item{f74}{Cvegetabele soup frequency factor}
+#'   \item{f75}{soup frequency factor}
+#'   \item{f76}{tortilla frequency factor}
+#'   \item{f77}{eggs frequency factor}
+#'   \item{f78}{bacon frequency factor}
+#'   \item{f79}{hot cereal frequency factor}
+#'   \item{f80}{cold cereal frequency factor}
+#'   \item{f81}{donuts frequency factor}
+#'   \item{f82}{muffins frequency factor}
+#'   \item{f83}{pankake frequency factor}
+#'   \item{f84}{bagel frequency factor}
+#'   \item{f85}{biscuit frequency factor}
 #'
 #'
 #'

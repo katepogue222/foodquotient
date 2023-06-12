@@ -2,6 +2,7 @@
 
 export(fq)
 export(grams)
+export(hsffq)
 export(macquotient)
 export(macros)
 export(micros)

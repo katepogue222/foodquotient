@@ -7,22 +7,21 @@
 macquotient(row)
 }
 \arguments{
-\item{row}{contains three components.
-p average daily grams of protein consumed
-f average daily grams of fat consumed
-c average daily grams of carbohydrates consumed}
+\item{row}{contains three components. p average daily grams of protein
+consumed f average daily grams of fat consumed c/ average daily grams of
+carbohydrates consumed}
 }
 \value{
 one value per participant will be returned, representing the food
-quotient for the indevidual
+  quotient for the indevidual
 }
 \description{
-The macquotient function calculates a food quotient for a participant
-based on average daily protein, carbs, and fat consumed for an individual or
-a group. In contrast to the quotient function, macquotient is able to
-generate reliable average food quotients for a group of people rather than
-only individual level. Group level estimates are reccomended in some studies
-to control for response bias.
+The macquotient function calculates a food quotient for a participant based
+on average daily protein, carbs, and fat consumed for an individual or a
+group. In contrast to the quotient function, macquotient is able to generate
+reliable average food quotients for a group of people rather than only
+individual level. Group level estimates are reccomended in some studies to
+control for response b/ias.
 }
 \examples{
 vec <- c(34.5,43, 212.4)
