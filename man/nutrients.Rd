@@ -7,20 +7,19 @@
 nutrients(row)
 }
 \arguments{
-\item{row}{contains two components.
-    F1:F85 1-8, representing different frequency factor responses from the
-hsffq. These will be stored in columns 2-86 in the row you plug in
-    A value representing participant's age. This will be stored in column
-1 of the inputed row}
+\item{row}{/contains two components. f1:f85 1-8, representing different
+frequency factor responses from the hsffq. These will be stored in columns
+2-86 in the row you plug in A value representing participant's age. This
+will be stored in column 1 of the inputed row}
 }
 \value{
 the row or dataframe returned will have 11 entries, representing
-total daily amounts of 7 micronutrients, 3 macronutrients, and calories
-for each participant. These columns will be labeled
+  total daily amounts of 7 micronutrients, 3 macronutrients, and calories for
+  each participant. These columns will be labeled
 }
 \description{
-The Nutrients function takes the age of a participant and their responses
-on the hsffq to generate an estimate of the participant's total daily
+The Nutrients function takes the age of a participant and their responses on
+the hsffq to generate an estimate of the participant's total daily
 micronutrients, macronutrients, and calories consumed for each food
 }
 \examples{

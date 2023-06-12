@@ -4,10 +4,10 @@
 \alias{fq}
 \title{Frequency Factor}
 \usage{
-fq(F)
+fq(f)
 }
 \arguments{
-\item{F}{1-8, representing different frequency factor responses from the
+\item{f}{1-8, representing different frequency factor responses from the
 hsffq. These can be in a dataframe, vector, or just single values}
 }
 \value{
@@ -18,11 +18,10 @@ for each food (columns) for each individual(rows).
 \description{
 The Frequency Factor function converts values 1-8, representing different
 frequency factor responses from the hsffq, to average daily servings consumed
-for that indevidual.
+for that individual.
 }
 \examples{
-test <- c(1,5,7,3,9,2,4,3,6,8)
-results<- fq(test)
-results
+test <- c(1, 5, 7, 3, 9, 2, 4, 3, 6, 8)
+fq(test)
 
 }

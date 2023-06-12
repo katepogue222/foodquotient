@@ -9,91 +9,91 @@
 A data frame with 32 rows and 85 columns:
 \describe{
   \item{a}{age of participant}
-  \item{F1}{milk frequency factor}
-  \item{F2}{hot chocolate frequency factor}
-  \item{F3}{cheese frequency factor}
-  \item{F4}{yogurt frequency frequency factor}
-  \item{F5}{ice cream frequency frequency factor}
-  \item{F6}{pudding frequency factor}
-  \item{F7}{orange juice frequency factor}
-  \item{F8}{other juice frequency factor}
-  \item{F9}{fruit drink frequency factor}
-  \item{F10}{banana frequency factor}
-  \item{F11}{peaches frequency factor}
-  \item{F12}{mixed fruit frequency factor}
-  \item{F13}{orange frequency factor}
-  \item{F14}{apple and pear frequency factor}
-  \item{F15}{applesauce frequency factor}
-  \item{F16}{grapes frequency factor}
-  \item{F17}{strawberries frequency factor}
-  \item{F18}{melon frequency factor}
-  \item{F19}{pineapple frequency factor}
-  \item{F20}{raisins frequency factor}
-  \item{F21}{corn frequency factor}
-  \item{F22}{peas frequency factor}
-  \item{F23}{tomato frequency factor}
-  \item{F24}{peppers frequency factor}
-  \item{F25}{carrot frequency factor}
-  \item{F26}{broccoli frequency factor}
-  \item{F27}{green beans frequency factor}
-  \item{F28}{spinach frequency factor}
-  \item{F29}{greens frequency factor}
-  \item{F30}{mixed vegetable frequency factor}
-  \item{F31}{squash frequency factor}
-  \item{F32}{zucchini frequency factor}
-  \item{F33}{fried potatoes frequency factor}
-  \item{F34}{other potaoes frequency factor}
-  \item{F35}{sweet potatoes frequency factor}
-  \item{F36}{cabbage frequency factor}
-  \item{F37}{lettuce frequency factor}
-  \item{F38}{mayonaise frequency factor}
-  \item{F39}{chips frequency factor}
-  \item{F40}{popcorn frequency factor}
-  \item{F41}{crackers frequency factor}
-  \item{F42}{nuts frequency factor}
-  \item{F43}{cookies frequency factor}
-  \item{F44}{cake frequency factor}
-  \item{F45}{pie frequency factor}
-  \item{F46}{jello frequency factor}
-  \item{F47}{chocolate frequency factor}
-  \item{F48}{candy frequency factor}
-  \item{F49}{coffee frequency factor}
-  \item{F50}{soda frequency factor}
-  \item{F51}{sugarfree soda frequency factor}
-  \item{F52}{beans frequency factor}
-  \item{F53}{rice frequency factor}
-  \item{F54}{pasta frequency factor}
-  \item{F55}{pizza frequency factor}
-  \item{F56}{tacos frequency factor}
-  \item{F57}{mac and cheese frequency factor}
-  \item{F58}{hot dogs frequency factor}
-  \item{F59}{sausage frequency factor}
-  \item{F60}{hamburger frequency factor}
-  \item{F61}{tuna frequency factor}
-  \item{F62}{fried fish frequency factor}
-  \item{F63}{other fish frequency factor}
-  \item{F64}{cold cuts frequency factor}
-  \item{F65}{chicken nuggets frequency factor}
-  \item{F66}{other chicken frequency factor}
-  \item{F67}{pork frequency factor}
-  \item{F68}{beef frequency factor}
-  \item{F69}{organ meats frequency factor}
-  \item{F70}{penut butter frequency factor}
-  \item{F71}{bread frequency factor}
-  \item{F72}{butter frequency factor}
-  \item{F73}{margarine frequency factor}
-  \item{F74}{Cvegetabele soup frequency factor}
-  \item{F75}{soup frequency factor}
-  \item{F76}{tortilla frequency factor}
-  \item{F77}{eggs frequency factor}
-  \item{F78}{bacon frequency factor}
-  \item{F79}{hot cereal frequency factor}
-  \item{F80}{cold cereal frequency factor}
-  \item{F81}{donuts frequency factor}
-  \item{F82}{muffins frequency factor}
-  \item{F83}{pankake frequency factor}
-  \item{F84}{bagel frequency factor}
-  \item{F85}{biscuit frequency factor}
+  \item{f1}{milk frequency factor}
+  \item{f2}{hot chocolate frequency factor}
+  \item{f3}{cheese frequency factor}
+  \item{f4}{yogurt frequency frequency factor}
+  \item{f5}{ice cream frequency frequency factor}
+  \item{f6}{pudding frequency factor}
+  \item{f7}{orange juice frequency factor}
+  \item{f8}{other juice frequency factor}
+  \item{f9}{fruit drink frequency factor}
+  \item{f10}{banana frequency factor}
+  \item{f11}{peaches frequency factor}
+  \item{f12}{mixed fruit frequency factor}
+  \item{f13}{orange frequency factor}
+  \item{f14}{apple and pear frequency factor}
+  \item{f15}{applesauce frequency factor}
+  \item{f16}{grapes frequency factor}
+  \item{f17}{strawberries frequency factor}
+  \item{f18}{melon frequency factor}
+  \item{f19}{pineapple frequency factor}
+  \item{f20}{raisins frequency factor}
+  \item{f21}{corn frequency factor}
+  \item{f22}{peas frequency factor}
+  \item{f23}{tomato frequency factor}
+  \item{f24}{peppers frequency factor}
+  \item{f25}{carrot frequency factor}
+  \item{f26}{broccoli frequency factor}
+  \item{f27}{green beans frequency factor}
+  \item{f28}{spinach frequency factor}
+  \item{f29}{greens frequency factor}
+  \item{f30}{mixed vegetable frequency factor}
+  \item{f31}{squash frequency factor}
+  \item{f32}{zucchini frequency factor}
+  \item{f33}{fried potatoes frequency factor}
+  \item{f34}{other potaoes frequency factor}
+  \item{f35}{sweet potatoes frequency factor}
+  \item{f36}{cabbage frequency factor}
+  \item{f37}{lettuce frequency factor}
+  \item{f38}{mayonaise frequency factor}
+  \item{f39}{chips frequency factor}
+  \item{f40}{popcorn frequency factor}
+  \item{f41}{crackers frequency factor}
+  \item{f42}{nuts frequency factor}
+  \item{f43}{cookies frequency factor}
+  \item{f44}{cake frequency factor}
+  \item{f45}{pie frequency factor}
+  \item{f46}{jello frequency factor}
+  \item{f47}{chocolate frequency factor}
+  \item{f48}{candy frequency factor}
+  \item{f49}{coffee frequency factor}
+  \item{f50}{soda frequency factor}
+  \item{f51}{sugarfree soda frequency factor}
+  \item{f52}{beans frequency factor}
+  \item{f53}{rice frequency factor}
+  \item{f54}{pasta frequency factor}
+  \item{f55}{pizza frequency factor}
+  \item{f56}{tacos frequency factor}
+  \item{f57}{mac and cheese frequency factor}
+  \item{f58}{hot dogs frequency factor}
+  \item{f59}{sausage frequency factor}
+  \item{f60}{hamburger frequency factor}
+  \item{f61}{tuna frequency factor}
+  \item{f62}{fried fish frequency factor}
+  \item{f63}{other fish frequency factor}
+  \item{f64}{cold cuts frequency factor}
+  \item{f65}{chicken nuggets frequency factor}
+  \item{f66}{other chicken frequency factor}
+  \item{f67}{pork frequency factor}
+  \item{f68}{beef frequency factor}
+  \item{f69}{organ meats frequency factor}
+  \item{f70}{penut butter frequency factor}
+  \item{f71}{bread frequency factor}
+  \item{f72}{butter frequency factor}
+  \item{f73}{margarine frequency factor}
+  \item{f74}{Cvegetabele soup frequency factor}
+  \item{f75}{soup frequency factor}
+  \item{f76}{tortilla frequency factor}
+  \item{f77}{eggs frequency factor}
+  \item{f78}{bacon frequency factor}
+  \item{f79}{hot cereal frequency factor}
+  \item{f80}{cold cereal frequency factor}
+  \item{f81}{donuts frequency factor}
+  \item{f82}{muffins frequency factor}
+  \item{f83}{pankake frequency factor}
+  \item{f84}{bagel frequency factor}
+  \item{f85}{biscuit frequency factor}
 
 
 
@@ -110,7 +110,7 @@ age_freq
 }
 \description{
 A small set of food frequency questionaire data including 32 children living in the United States.
-F1:F85 represents the frequency with which participants consumed 85 respective foods.
+f1:f85 represents the frequency with which participants consumed 85 respective foods.
 Numbers 1-8 correspond to the following:
 1: never
 2: 1-3 times per month

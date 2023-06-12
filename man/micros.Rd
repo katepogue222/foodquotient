@@ -7,15 +7,14 @@
 micros(row)
 }
 \arguments{
-\item{row}{contains two components.
-    F1:F85 1-8, representing different frequency factor responses from the
-hsffq. These will be stored in columns 2-86 in the row you plug in
-.   A value representing participant's age. This will be stored in column
-1 of the inputed row}
+\item{row}{contains two components. f1:f85 1-8, representing different
+frequency factor responses from the hsffq. These will be stored in columns
+2-86 in the row you plug in .   A value representing participant's age. This
+will be stored in column 1 of the inputed row}
 }
 \value{
-the row or dataframe returned will have 7 entries, representing
-total daily amounts of 7 micronutrients for each participant
+the row or dataframe returned will have 7 entries, representing total
+  daily amounts of 7 micronutrients for each participant
 }
 \description{
 The Micronutrients function takes the age of a participant and their responses
