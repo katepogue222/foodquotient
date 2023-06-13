@@ -10,7 +10,7 @@ Description: The foodqotient package was created to aid in analysing data from
     Questionaire (HSFFQ).
     Functions from this package take answers of the HSFFQ and generate 
     estimates of daily consumed micronutrients, calories, macronutrients on 
-    an indeviudal level.
+    an indevidual level.
     The package is also capable of calculating food quotients on an indevidual 
     and group level, which aides in the calculation of total energy expenidture
     (TEE) using the doubly labeled water (DLW) method, which is the gold 

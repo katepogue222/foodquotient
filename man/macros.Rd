@@ -7,7 +7,7 @@
 macros(row)
 }
 \arguments{
-\item{row}{vector with 86 entries consisting of 2 components f1:f85 1-8,
+\item{row}{vector with 86 entries consisting of 2 components f1:f85 1-9,
 representing different frequency factor responses from the hsffq. These will
 be stored in columns 2-86 in the row you plug in A value representing
 participant's age. This will be stored in column 1 of the inputed row}
@@ -22,14 +22,19 @@ on the hsffq to generate estimates of the participant's total daily protein,
 carbohydrate, and fat consumed for each food
 }
 \examples{
-random_integers <- sample(1:8, 85, replace=TRUE)
+ random_integers <- sample(1:9, 85, replace=TRUE)
 vec <- c(6.2, random_integers)
-macros(vec)
+grams(vec)
 
-vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-row1 <- data.frame(t(vec1))
-row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-df <- rbind(row1, row2)
+rquestionaire <- function(n, n_food_questions = 85) {
+  mat <- matrix(
+    sample(1:9, n_food_questions*n, replace = TRUE),
+    nrow = n, ncol = n_food_questions
+  )
+  df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+  cbind(df, as.data.frame(mat))
+}
+df <- rquestionaire(3)
 
 df_results <- data.frame()
 for (i in 1:nrow(df)) {

@@ -7,7 +7,7 @@
 fq(f)
 }
 \arguments{
-\item{f}{1-8, representing different frequency factor responses from the
+\item{f}{1-9, representing different frequency factor responses from the
 hsffq. These can be in a dataframe, vector, or just single values}
 }
 \value{
@@ -16,12 +16,24 @@ input, with each position holding the average daily servings consumed
 for each food (columns) for each individual(rows).
 }
 \description{
-The Frequency Factor function converts values 1-8, representing different
+The Frequency Factor function converts values 1-9, representing different
 frequency factor responses from the hsffq, to average daily servings consumed
 for that individual.
 }
 \examples{
 test <- c(1, 5, 7, 3, 9, 2, 4, 3, 6, 8)
 fq(test)
+
+rquestionaire <- function(n, n_food_questions = 85) {
+  mat <- matrix(
+    sample(1:9, n_food_questions*n, replace = TRUE),
+    nrow = n, ncol = n_food_questions
+  )
+  df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+  cbind(df, as.data.frame(mat))
+}
+df <- rquestionaire(6)
+
+fq(df)
 
 }

@@ -1,11 +1,17 @@
-#' Harvard ...
+#' Harvard Foood Frequency Questionnaire Nutrition Information
 #'
-#' Description here
+#' This dataframe is used internally by the functions of foodquotient and
+#' includes portion size information by age for each of the 85 foods included in
+#' the HSFFQ from the HSFFQ user's manual. Additionally, nutrient information
+#' is included for each of the 85 foods, pulled from the USDA's public search
+#' tool.
 #'
-#' @return The Harvard..., as a data frame.
+#'
+#' @return A portion size and nutrient information reference data frame.
 #' @export
-#' @examples
-#' # str(hsffq())
+#'
+#'
+#'
 hsffq <- function() {
   structure(
     list(

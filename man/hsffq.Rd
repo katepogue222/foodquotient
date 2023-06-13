@@ -2,16 +2,17 @@
 % Please edit documentation in R/hsffq.R
 \name{hsffq}
 \alias{hsffq}
-\title{Harvard ...}
+\title{Harvard Foood Frequency Questionnaire Nutrition Information}
 \usage{
 hsffq()
 }
 \value{
-The Harvard..., as a data frame.
+A portion size and nutrient information reference data frame.
 }
 \description{
-Description here
-}
-\examples{
-# str(hsffq())
+This dataframe is used internally by the functions of foodquotient and
+includes portion size information by age for each of the 85 foods included in
+the HSFFQ from the HSFFQ user's manual. Additionally, nutrient information
+is included for each of the 85 foods, pulled from the USDA's public search
+tool.
 }

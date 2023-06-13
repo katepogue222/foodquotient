@@ -110,7 +110,7 @@ freq
 \description{
 A small set of data including 32 children living in the united states. f1:f85
 represents the frequency with which participants consumed 85 respective foods.
-Numbers 1-8 correspond to the following:
+Numbers 1-9 correspond to the following:
 1: never
 2: 1-3 times per month
 3: once per week
