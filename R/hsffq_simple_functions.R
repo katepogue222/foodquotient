@@ -1,10 +1,10 @@
 #' Frequency Factor
 #'
-#' The Frequency Factor function converts values 1-8, representing different
+#' The Frequency Factor function converts values 1-9, representing different
 #' frequency factor responses from the hsffq, to average daily servings consumed
 #' for that individual.
 #'
-#' @param f 1-8, representing different frequency factor responses from the
+#' @param f 1-9, representing different frequency factor responses from the
 #' hsffq. These can be in a dataframe, vector, or just single values
 #' @return a dataframe, vector, or single value of the same dimension as the
 #' input, with each position holding the average daily servings consumed
@@ -14,23 +14,35 @@
 #' test <- c(1, 5, 7, 3, 9, 2, 4, 3, 6, 8)
 #' fq(test)
 #'
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(6)
+#'
+#' fq(df)
+#'
 fq <- function(f) {
-  if (length(f) > 1) return(vapply(f, fq, double(1)))
-  stopifnot(is.numeric(f))
-  if (f > 8) return(6.00)
-  if (f > 7) return(4.50)
-  if (f > 6) return(2.50)
-  if (f > 5) return(1.00)
-  if (f > 4) return(0.80)
-  if (f > 3) return(0.43)
-  if (f > 2) return(0.14)
-  if (f > 1) return(0.08)
-  0
+  ifelse(f > 8, 6,
+         ifelse(f > 7, 4.5,
+                ifelse(f > 6, 2.5,
+                       ifelse(f > 5, 1,
+                              ifelse(f > 4, 0.8,
+                                     ifelse(f > 3, 0.43,
+                                            ifelse(f > 2, 0.14,
+                                                   ifelse(f > 1, 0.08, 0)
+                                            )
+                                     )
+                              )
+                       )
+                )
+         )
+  )
 }
-
-
-
-
 
 #' Grams
 #'
@@ -38,17 +50,17 @@ fq <- function(f) {
 #' hsffq to generate an estimate of the participant's total daily grams consumed
 #' for each food
 #'
-#' @param row contains two components. f1:f85 1-8, representing different
+#' @param row contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
-#'   2-86 in the row you plug in A value representing participant's age. This
-#'   will be stored in column 1 of the inputed row.
+#'   2-86 in the row you plug in. "age" is a value representing participant's
+#'   age. This will be stored in column 1 of the inputed row.
 #' @return the row returned will have 85 entries, representing each of the 85
 #'   foods on the hsffq for one participant. Each entry represents the total
 #'   daily grams of that food consumed for that individual.
 #' @export
 #' @examples
 #'
-#' random_integers <- sample(1:8, 85, replace=TRUE)
+#' random_integers <- sample(1:9, 85, replace=TRUE)
 #' vec <- c(6.2, random_integers)
 #' grams(vec)
 #'
@@ -62,50 +74,38 @@ fq <- function(f) {
 #' }
 #' df <- rquestionaire(2)
 #'
-#' grams(df)
-#'
+#' df_results <- data.frame()
+#'for (i in 1:nrow(df)) {
+#'result <- grams(df[i,])
+#'df_results <- rbind(df_results, result)
+#'}
 #'
 grams <- function(row) {
 
-  if (is.data.frame(row)) {
+  a <- row[1]
 
-    for (i in 1:nrow(row)) {
-      age <- row[i,1]
-      multiplier <- if (2 <= age && age < 5) hsffq()$gm_per_serv_2.5 else hsffq()$gm_per_serv_6.11
-      row[i,2:ncol(row)] <- fq(row[i,2:ncol(row)]) * multiplier
-    } # end i
-
+  if (a >= 2 & a < 5) {
+    v1 <- row[2:86]
+    v2 <- hsffq()$gm_per_serv_2.5
+  } else if (a >= 5 & a <= 11) {
+    v1 <- row[2:86]
+    v2 <- hsffq()$gm_per_serv_6.11
   } else {
-
-    row <- as.data.frame(t(row))
-
-    age <- row[1]
-
-    if (age >= 2 & age < 5) {
-      v1 <- row[2:86]
-      v2 <- hsffq()$gm_per_serv_2.5
-    } else if (age >= 5 & age <= 11) {
-      v1 <- row[2:86]
-      v2 <- hsffq()$gm_per_serv_6.11
-    } else {
-      stop("`grams()` is only implemented for ages <= 11.")
-    }
-
-    fq(v1) * v2
-
+    print("out of range")
+    return(NULL)
   }
 
+  output <- fq(v1) * v2
+
+  return(output)
 }
-
-
-
 #' Macronutrients
 #'
 #' The Macronutrients function takes the age of a participant and their responses
 #' on the hsffq to generate estimates of the participant's total daily protein,
 #' carbohydrate, and fat consumed for each food
 #'
-#' @param row vector with 86 entries consisting of 2 components f1:f85 1-8,
+#' @param row vector with 86 entries consisting of 2 components f1:f85 1-9,
 #'   representing different frequency factor responses from the hsffq. These will
 #'   be stored in columns 2-86 in the row you plug in A value representing
 #'   participant's age. This will be stored in column 1 of the inputed row
@@ -114,14 +114,19 @@ grams <- function(row) {
 #' @export
 #'
 #' @examples
-#' random_integers <- sample(1:8, 85, replace=TRUE)
+#'  random_integers <- sample(1:9, 85, replace=TRUE)
 #' vec <- c(6.2, random_integers)
-#' macros(vec)
+#' grams(vec)
 #'
-#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#' row1 <- data.frame(t(vec1))
-#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#' df <- rbind(row1, row2)
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(3)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -167,7 +172,7 @@ macros <- function(row) {
 #' on the hsffq to generate an estimate of the participant's total daily
 #' micronutrients consumed for each food
 #'
-#' @param row contains two components. f1:f85 1-8, representing different
+#' @param row contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
 #'   2-86 in the row you plug in .   A value representing participant's age. This
 #'   will be stored in column 1 of the inputed row
@@ -179,10 +184,15 @@ macros <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' micros(vec)
 #'
-#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#' row1 <- data.frame(t(vec1))
-#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#' df <- rbind(row1, row2)
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(4)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -191,8 +201,6 @@ macros <- function(row) {
 #' }
 #'
 #'
-
-
 micros <- function(row) {
 
 
@@ -241,15 +249,13 @@ micros <- function(row) {
   return(macros_results)
 }
 
-
-
 #' Nutrients
 #'
 #' The Nutrients function takes the age of a participant and their responses on
 #' the hsffq to generate an estimate of the participant's total daily
 #' micronutrients, macronutrients, and calories consumed for each food
 #'
-#' @param  row /contains two components. f1:f85 1-8, representing different
+#' @param  row /contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
 #'   2-86 in the row you plug in A value representing participant's age. This
 #'   will be stored in column 1 of the inputed row
@@ -262,10 +268,15 @@ micros <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' nutrients(vec)
 #'
-#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#' row1 <- data.frame(t(vec1))
-#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#' df <- rbind(row1, row2)
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(5)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -400,7 +411,7 @@ macquotient <- function(row) {
 #' individual's answers to the hsffq. This function is only recommended to
 #' calculate at the individual level.
 #'
-#' @param  row contains two components. f1:f85 1-8, representing different
+#' @param  row contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
 #'   2-86 in the row you plug in A value representing participant's age. This
 #'   will be stored in column 1 of the input row/
@@ -413,10 +424,15 @@ macquotient <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' quotient(vec)
 #'
-#' vec1 <- c(5.1, sample(1:8, 85, replace = TRUE))
-#' row1 <- data.frame(t(vec1))
-#' row2 <- data.frame(t(c(8.3, sample(1:8, 85, replace = TRUE))))
-#' df <- rbind(row1, row2)
+#' rquestionaire <- function(n, n_food_questions = 85) {
+#'   mat <- matrix(
+#'     sample(1:9, n_food_questions*n, replace = TRUE),
+#'     nrow = n, ncol = n_food_questions
+#'   )
+#'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
+#'   cbind(df, as.data.frame(mat))
+#' }
+#' df <- rquestionaire(6)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -479,7 +495,7 @@ quotient <- function(row) {
 #'
 #' A small set of data including 32 children living in the united states. f1:f85
 #' represents the frequency with which participants consumed 85 respective foods.
-#' Numbers 1-8 correspond to the following:
+#' Numbers 1-9 correspond to the following:
 #' 1: never
 #' 2: 1-3 times per month
 #' 3: once per week
@@ -593,9 +609,10 @@ quotient <- function(row) {
 
 #' Frequency Factors for CATALYST Project Children with Age of Participant
 #'
-#' A small set of food frequency questionaire data including 32 children living in the United States.
-#'f1:f85 represents the frequency with which participants consumed 85 respective foods.
-#' Numbers 1-8 correspond to the following:
+#' A small set of food frequency questionaire data including 32 children living
+#'  in the United States. f1:f85 represents the frequency with which
+#'  participants consumed 85 respective foods.
+#' Numbers 1-9 correspond to the following:
 #' 1: never
 #' 2: 1-3 times per month
 #' 3: once per week
@@ -606,8 +623,8 @@ quotient <- function(row) {
 #' 8: 4-5 times per day
 #' 9: 6 times per day
 #'
-#' @format ## `freq`
-#' A data frame with 32 rows and 85 columns:
+#' @format ## `age_freq`
+#' A data frame with 32 rows and 86 columns:
 #' \describe{
 #'   \item{a}{age of participant}
 #'   \item{f1}{milk frequency factor}

@@ -5,8 +5,8 @@
 \alias{age_freq}
 \title{Frequency Factors for CATALYST Project Children with Age of Participant}
 \format{
-## `freq`
-A data frame with 32 rows and 85 columns:
+## `age_freq`
+A data frame with 32 rows and 86 columns:
 \describe{
   \item{a}{age of participant}
   \item{f1}{milk frequency factor}
@@ -109,9 +109,10 @@ A data frame with 32 rows and 85 columns:
 age_freq
 }
 \description{
-A small set of food frequency questionaire data including 32 children living in the United States.
-f1:f85 represents the frequency with which participants consumed 85 respective foods.
-Numbers 1-8 correspond to the following:
+A small set of food frequency questionaire data including 32 children living
+ in the United States. f1:f85 represents the frequency with which
+ participants consumed 85 respective foods.
+Numbers 1-9 correspond to the following:
 1: never
 2: 1-3 times per month
 3: once per week

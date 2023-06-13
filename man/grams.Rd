@@ -7,10 +7,10 @@
 grams(row)
 }
 \arguments{
-\item{row}{contains two components. f1:f85 1-8, representing different
+\item{row}{contains two components. f1:f85 1-9, representing different
 frequency factor responses from the hsffq. These will be stored in columns
-2-86 in the row you plug in A value representing participant's age. This
-will be stored in column 1 of the inputed row.}
+2-86 in the row you plug in. "age" is a value representing participant's
+age. This will be stored in column 1 of the inputed row.}
 }
 \value{
 the row returned will have 85 entries, representing each of the 85
@@ -24,7 +24,7 @@ for each food
 }
 \examples{
 
-random_integers <- sample(1:8, 85, replace=TRUE)
+random_integers <- sample(1:9, 85, replace=TRUE)
 vec <- c(6.2, random_integers)
 grams(vec)
 
@@ -38,7 +38,10 @@ rquestionaire <- function(n, n_food_questions = 85) {
 }
 df <- rquestionaire(2)
 
-grams(df)
-
+df_results <- data.frame()
+for (i in 1:nrow(df)) {
+result <- grams(df[i,])
+df_results <- rbind(df_results, result)
+}
 
 }
