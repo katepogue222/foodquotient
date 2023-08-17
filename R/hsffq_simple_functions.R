@@ -14,7 +14,7 @@
 #' test <- c(1, 5, 7, 3, 9, 2, 4, 3, 6, 8)
 #' fq(test)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -22,7 +22,7 @@
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(6)
+#' df <- rquestionnaire(6)
 #'
 #' fq(df)
 #'
@@ -48,15 +48,13 @@ fq <- function(f) {
 #'
 #' The grams function takes the age of a participant and their responses on the
 #' hsffq to generate an estimate of the participant's total daily grams consumed
-#' for each food
+#' for each food.
 #'
-#' @param row contains two components. f1:f85 1-9, representing different
-#'   frequency factor responses from the hsffq. These will be stored in columns
-#'   2-86 in the row you plug in. "age" is a value representing participant's
-#'   age. This will be stored in column 1 of the inputed row.
-#' @return the row returned will have 85 entries, representing each of the 85
-#'   foods on the hsffq for one participant. Each entry represents the total
-#'   daily grams of that food consumed for that individual.
+#' @param row A numeric vector with components 'age', representing the age of the
+#' participant, and 'f1' to 'f85', representing different frequency factor responses
+#' from the hsffq.
+#' @return A numeric vector of length 85, representing the estimated total daily
+#' grams of each food consumed for the participant.
 #' @export
 #' @examples
 #'
@@ -64,7 +62,7 @@ fq <- function(f) {
 #' vec <- c(6.2, random_integers)
 #' grams(vec)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -72,13 +70,14 @@ fq <- function(f) {
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(2)
+#' df <- rquestionnaire(2)
 #'
 #' df_results <- data.frame()
-#'for (i in 1:nrow(df)) {
-#'result <- grams(df[i,])
-#'df_results <- rbind(df_results, result)
-#'}
+#' for (i in 1:nrow(df)) {
+#'   result <- grams(df[i,])
+#'   df_results <- rbind(df_results, result)
+#' }
+#'
 #'
 grams <- function(row) {
 
@@ -91,7 +90,7 @@ grams <- function(row) {
     v1 <- row[2:86]
     v2 <- hsffq()$gm_per_serv_6.11
   } else {
-    print("out of range")
+    warning("Age is out of the expected range.")
     return(NULL)
   }
 
@@ -103,12 +102,12 @@ grams <- function(row) {
 #'
 #' The Macronutrients function takes the age of a participant and their responses
 #' on the hsffq to generate estimates of the participant's total daily protein,
-#' carbohydrate, and fat consumed for each food
+#' carbohydrate, and fat consumed for each food.
 #'
 #' @param row vector with 86 entries consisting of 2 components f1:f85 1-9,
 #'   representing different frequency factor responses from the hsffq. These will
 #'   be stored in columns 2-86 in the row you plug in A value representing
-#'   participant's age. This will be stored in column 1 of the inputed row
+#'   participant's age. This will be stored in column 1 of the input row
 #' @return the row or dataframe returned will have 3 entries, representing total
 #'   daily amounts of protein, carbohydrates, and fat for each participant
 #' @export
@@ -118,7 +117,7 @@ grams <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' grams(vec)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -126,7 +125,7 @@ grams <- function(row) {
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(3)
+#' df <- rquestionnaire(3)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -150,7 +149,7 @@ macros <- function(row) {
     v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$carb
     v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$fat
   } else {
-    print("out of range")
+    warning("Age is out of the expected range.")
     return(NULL)
   }
 
@@ -170,12 +169,12 @@ macros <- function(row) {
 #'
 #' The Micronutrients function takes the age of a participant and their responses
 #' on the hsffq to generate an estimate of the participant's total daily
-#' micronutrients consumed for each food
+#' micronutrients consumed for each food.
 #'
 #' @param row contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
 #'   2-86 in the row you plug in .   A value representing participant's age. This
-#'   will be stored in column 1 of the inputed row
+#'   will be stored in column 1 of the input row
 #' @return the row or dataframe returned will have 7 entries, representing total
 #'   daily amounts of 7 micronutrients for each participant
 #' @export
@@ -184,7 +183,7 @@ macros <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' micros(vec)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -192,7 +191,7 @@ macros <- function(row) {
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(4)
+#' df <- rquestionnaire(4)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -225,7 +224,7 @@ micros <- function(row) {
     v7 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.a
     v8 <- hsffq()$gm_per_serv_6.11 * hsffq()$folate
   } else {
-    print("out of range")
+    warning("Age is out of the expected range.")
     return(NULL)
   }
 
@@ -258,7 +257,7 @@ micros <- function(row) {
 #' @param  row /contains two components. f1:f85 1-9, representing different
 #'   frequency factor responses from the hsffq. These will be stored in columns
 #'   2-86 in the row you plug in A value representing participant's age. This
-#'   will be stored in column 1 of the inputed row
+#'   will be stored in column 1 of the input row
 #' @return the row or dataframe returned will have 11 entries, representing
 #'   total daily amounts of 7 micronutrients, 3 macronutrients, and calories for
 #'   each participant. These columns will be labeled
@@ -268,7 +267,7 @@ micros <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' nutrients(vec)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -276,7 +275,7 @@ micros <- function(row) {
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(5)
+#' df <- rquestionnaire(5)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -317,7 +316,7 @@ nutrients <- function(row) {
     v11 <- hsffq()$gm_per_serv_6.11 * hsffq()$vitamin.a
     v12 <- hsffq()$gm_per_serv_6.11 * hsffq()$folate
   } else {
-    print("out of range")
+    warning("Age is out of the expected range.")
     return(NULL)
   }
 
@@ -355,14 +354,14 @@ nutrients <- function(row) {
 #' on average daily protein, carbs, and fat consumed for an individual or a
 #' group. In contrast to the quotient function, macquotient is able to generate
 #' reliable average food quotients for a group of people rather than only
-#' individual level. Group level estimates are reccomended in some studies to
-#' control for response b/ias.
+#' individual level. Group level estimates are recomended in some studies to
+#' control for response bias.
 #'
 #' @param  row contains three components. p average daily grams of protein
 #'   consumed f average daily grams of fat consumed c/ average daily grams of
 #'   carbohydrates consumed
 #' @return one value per participant will be returned, representing the food
-#'   quotient for the indevidual
+#'   quotient for the individual
 #' @export
 #'
 #' @examples
@@ -424,7 +423,7 @@ macquotient <- function(row) {
 #' vec <- c(6.2, random_integers)
 #' quotient(vec)
 #'
-#' rquestionaire <- function(n, n_food_questions = 85) {
+#' rquestionnaire <- function(n, n_food_questions = 85) {
 #'   mat <- matrix(
 #'     sample(1:9, n_food_questions*n, replace = TRUE),
 #'     nrow = n, ncol = n_food_questions
@@ -432,7 +431,7 @@ macquotient <- function(row) {
 #'   df <- data.frame( age = round(runif(n, 2, 11), digits = 1) )
 #'   cbind(df, as.data.frame(mat))
 #' }
-#' df <- rquestionaire(6)
+#' df <- rquestionnaire(6)
 #'
 #' df_results <- data.frame()
 #' for (i in 1:nrow(df)) {
@@ -460,7 +459,7 @@ quotient <- function(row) {
     v3 <- hsffq()$gm_per_serv_6.11 * hsffq()$carb
     v4 <- hsffq()$gm_per_serv_6.11 * hsffq()$fat
   } else {
-    print("out of range")
+    warning("Age is out of the expected range.")
     return(NULL)
   }
 
@@ -542,11 +541,11 @@ quotient <- function(row) {
 #'   \item{f31}{squash frequency factor}
 #'   \item{f32}{zucchini frequency factor}
 #'   \item{f33}{fried potatoes frequency factor}
-#'   \item{f34}{other potaoes frequency factor}
+#'   \item{f34}{other potatoes frequency factor}
 #'   \item{f35}{sweet potatoes frequency factor}
 #'   \item{f36}{cabbage frequency factor}
 #'   \item{f37}{lettuce frequency factor}
-#'   \item{f38}{mayonaise frequency factor}
+#'   \item{f38}{mayonnaise frequency factor}
 #'   \item{f39}{chips frequency factor}
 #'   \item{f40}{popcorn frequency factor}
 #'   \item{f41}{crackers frequency factor}
@@ -578,11 +577,11 @@ quotient <- function(row) {
 #'   \item{f67}{pork frequency factor}
 #'   \item{f68}{beef frequency factor}
 #'   \item{f69}{organ meats frequency factor}
-#'   \item{f70}{penut butter frequency factor}
+#'   \item{f70}{peanut butter frequency factor}
 #'   \item{f71}{bread frequency factor}
 #'   \item{f72}{butter frequency factor}
 #'   \item{f73}{margarine frequency factor}
-#'   \item{f74}{Cvegetabele soup frequency factor}
+#'   \item{f74}{vegetabele soup frequency factor}
 #'   \item{f75}{soup frequency factor}
 #'   \item{f76}{tortilla frequency factor}
 #'   \item{f77}{eggs frequency factor}
@@ -591,7 +590,7 @@ quotient <- function(row) {
 #'   \item{f80}{cold cereal frequency factor}
 #'   \item{f81}{donuts frequency factor}
 #'   \item{f82}{muffins frequency factor}
-#'   \item{f83}{pankake frequency factor}
+#'   \item{f83}{pancake frequency factor}
 #'   \item{f84}{bagel frequency factor}
 #'   \item{f85}{biscuit frequency factor}
 #'
@@ -609,7 +608,7 @@ quotient <- function(row) {
 
 #' Frequency Factors for CATALYST Project Children with Age of Participant
 #'
-#' A small set of food frequency questionaire data including 32 children living
+#' A small set of food frequency questionnaire data including 32 children living
 #'  in the United States. f1:f85 represents the frequency with which
 #'  participants consumed 85 respective foods.
 #' Numbers 1-9 correspond to the following:
@@ -660,11 +659,11 @@ quotient <- function(row) {
 #'   \item{f31}{squash frequency factor}
 #'   \item{f32}{zucchini frequency factor}
 #'   \item{f33}{fried potatoes frequency factor}
-#'   \item{f34}{other potaoes frequency factor}
+#'   \item{f34}{other potatoes frequency factor}
 #'   \item{f35}{sweet potatoes frequency factor}
 #'   \item{f36}{cabbage frequency factor}
 #'   \item{f37}{lettuce frequency factor}
-#'   \item{f38}{mayonaise frequency factor}
+#'   \item{f38}{mayonnaise frequency factor}
 #'   \item{f39}{chips frequency factor}
 #'   \item{f40}{popcorn frequency factor}
 #'   \item{f41}{crackers frequency factor}
@@ -696,11 +695,11 @@ quotient <- function(row) {
 #'   \item{f67}{pork frequency factor}
 #'   \item{f68}{beef frequency factor}
 #'   \item{f69}{organ meats frequency factor}
-#'   \item{f70}{penut butter frequency factor}
+#'   \item{f70}{peanut butter frequency factor}
 #'   \item{f71}{bread frequency factor}
 #'   \item{f72}{butter frequency factor}
 #'   \item{f73}{margarine frequency factor}
-#'   \item{f74}{Cvegetabele soup frequency factor}
+#'   \item{f74}{vegetabele soup frequency factor}
 #'   \item{f75}{soup frequency factor}
 #'   \item{f76}{tortilla frequency factor}
 #'   \item{f77}{eggs frequency factor}
@@ -709,7 +708,7 @@ quotient <- function(row) {
 #'   \item{f80}{cold cereal frequency factor}
 #'   \item{f81}{donuts frequency factor}
 #'   \item{f82}{muffins frequency factor}
-#'   \item{f83}{pankake frequency factor}
+#'   \item{f83}{pancake frequency factor}
 #'   \item{f84}{bagel frequency factor}
 #'   \item{f85}{biscuit frequency factor}
 #'

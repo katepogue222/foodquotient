@@ -5,19 +5,19 @@ Version: 0.1.0
 Authors@R: c(
     person("Kate", "Pogue", email = "katepogue222@gmail.com", role = c("aut", "cre"))
   )
-Description: The foodqotient package was created to aid in analysing data from 
-    a food frequency questionaire known as the Harvard Service Food Frequency 
-    Questionaire (HSFFQ).
-    Functions from this package take answers of the HSFFQ and generate 
+Description: Aids in analysing data from a food frequency questionnaire known as 
+    the Harvard Service Food Frequency Questionnaire (HSFFQ).
+    Functions from this package use answers from the HSFFQ to generate 
     estimates of daily consumed micronutrients, calories, macronutrients on 
-    an indevidual level.
-    The package is also capable of calculating food quotients on an indevidual 
-    and group level, which aides in the calculation of total energy expenidture
-    (TEE) using the doubly labeled water (DLW) method, which is the gold 
-    standard for measuring TEE. 
+    an individual level.
+    The package also calculates food quotients on individual and group levels. 
+    Foodquotient calculation is an often tedious step in the calculation of 
+    total human energy expenditure (TEE) using the doubly labeled water method, 
+    which is the gold standard for measuring TEE. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
 Depends: 
     R (>= 2.10)
+URL: <https://naldc.nal.usda.gov/catalog/32818>
